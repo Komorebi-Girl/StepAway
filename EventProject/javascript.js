@@ -1,4 +1,4 @@
-let eventTitle ="New Jersey Devils vs. Chicago Blackhawks";
+let eventTitle ="bonj";
 let city = "Newark";
 let venue = "Prudential Center"
 let date = "";
@@ -7,13 +7,13 @@ let date = "";
 let currency = "";
 let stubMin = 0;
 let stubMax = 0;
-let stubAvg = 0;
 let stubLink = "";
 
+let seatVenueName = "";
+let seatVenueURL = "";
 let seatMin = 0;
 let seatMax = 0;
 let seatAvg = 0;
-let seatLink = "";
 
 
 //stubhub Territory
@@ -26,23 +26,33 @@ $.ajax({
   method: "GET",
   headers: {"Authorization": stubToken}
 }).done(function(response) {
+	if (response.length > 1){
 
-	//sets response to stubData and makes sure something is returned
-	let stubData = response.events;
-	console.log(stubData);
+		//sets response to stubData and makes sure something is returned
+		let stubData = response.events;
+		console.log(stubData);
 
-	//sets currency
-	currency =" " +stubData[0].ticketInfo.minPriceWithCurrencyCode.currency;
+		//venue URL
+		stubLink = 'https://www.stubhub.com/' + stubData[0].venue.webURI;
+		console.log('StubURL:' + stubLink);
+
+		//sets currency
+		currency = ' ' + stubData[0].ticketInfo.minPriceWithCurrencyCode.currency;
 	
-	//sets min value
-	stubMin = stubData[0].ticketInfo.minPriceWithCurrencyCode.amount;
-	console.log("Stub Min: "+stubMin+currency);
+		//sets min value
+		stubMin = stubData[0].ticketInfo.minPriceWithCurrencyCode.amount;
+		console.log('Stub Min: ' + stubMin + currency);
 
-	//sets max value
-	stubMax = stubData[0].ticketInfo.maxPriceWithCurrencyCode.amount;
-	console.log("Stub Max: "+stubMax+currency);
+		//sets max value
+		stubMax = stubData[0].ticketInfo.maxPriceWithCurrencyCode.amount;
+		console.log('Stub Max: ' + stubMax + currency);
 
+		let stubButton = '<a href='+'"'+stubLink+'"'+'> Stubhub starting at: ' + stubMin +' ' + currency + '</a>';
+		$(".card-action").append(stubButton);
 
+	}else{
+		console.log("No events found on Stubhub");
+	}
 });
 
 
@@ -54,8 +64,6 @@ $.ajax({
 
 let seatgeekURL = "https://api.seatgeek.com/2/venues?client_id=NzUzODA4OXwxNTEzODc4OTMwLjk3&city="+city+"&q="+venue;
 
-
-
 //seatgeek AJAX GET request
 $.ajax({
 	url: seatgeekURL,
@@ -63,4 +71,18 @@ $.ajax({
 }).done(function(response) {
 	let seatData = response.venues;
 	console.log(seatData);
-});
+
+	//sets venue name
+	seatVenueName = seatData[0].name;
+	console.log("Venue Name: " + seatVenueName);
+
+	//sets venue ticket url
+	seatVenueURL = seatData[0].url;
+	console.log("Ticket URL: " + seatVenueURL);
+
+	let seatButton = "<a href="+ seatVenueURL + ">SeatGeek Search: "+seatVenueName+"</a>"
+	$(".card-action").append(seatButton);
+
+	});
+
+
