@@ -1,14 +1,17 @@
-let eventTitle ="bonj";
+let eventTitle ="Detroit Red Wings at New Jersey Devils";
 let city = "Newark";
 let venue = "Prudential Center"
 let date = "";
 
+//Detroit Red Wings at New Jersey Devils - use as test for working
 
+//stubhub variables
 let currency = "";
 let stubMin = 0;
 let stubMax = 0;
 let stubLink = "";
 
+//seatgeek variables
 let seatVenueName = "";
 let seatVenueURL = "";
 let seatMin = 0;
@@ -26,11 +29,12 @@ $.ajax({
   method: "GET",
   headers: {"Authorization": stubToken}
 }).done(function(response) {
-	if (response.length > 1){
 
-		//sets response to stubData and makes sure something is returned
-		let stubData = response.events;
-		console.log(stubData);
+	//sets response to stubData and makes sure something is returned
+	let stubData = response.events;
+	console.log(stubData);
+
+	if (stubData.length >= 1){
 
 		//venue URL
 		stubLink = 'https://www.stubhub.com/' + stubData[0].venue.webURI;
@@ -47,20 +51,23 @@ $.ajax({
 		stubMax = stubData[0].ticketInfo.maxPriceWithCurrencyCode.amount;
 		console.log('Stub Max: ' + stubMax + currency);
 
+		//appends button to card
 		let stubButton = '<a href='+'"'+stubLink+'"'+'> Stubhub starting at: ' + stubMin +' ' + currency + '</a>';
 		$(".card-action").append(stubButton);
 
 	}else{
+
+		//lets user know that know tickets were found
 		console.log("No events found on Stubhub");
+		let stubButton = '<a href="https://www.stubhub.com">Sorry, we could not find tickets</a>'
+		$(".card-action").append(stubButton);
+
 	}
 });
 
 
 
-
-
 //SeatGeeek Territory
-
 
 let seatgeekURL = "https://api.seatgeek.com/2/venues?client_id=NzUzODA4OXwxNTEzODc4OTMwLjk3&city="+city+"&q="+venue;
 
@@ -69,20 +76,32 @@ $.ajax({
 	url: seatgeekURL,
   method: "GET"
 }).done(function(response) {
+
+	//sets response to seatData and makes sure something is returned
 	let seatData = response.venues;
 	console.log(seatData);
 
-	//sets venue name
-	seatVenueName = seatData[0].name;
-	console.log("Venue Name: " + seatVenueName);
+	if(seatData.length >= 1){
+		//sets venue name
+		seatVenueName = seatData[0].name;
+		console.log("Venue Name: " + seatVenueName);
 
-	//sets venue ticket url
-	seatVenueURL = seatData[0].url;
-	console.log("Ticket URL: " + seatVenueURL);
+		//sets venue ticket url
+		seatVenueURL = seatData[0].url;
+		console.log("Ticket URL: " + seatVenueURL);
 
-	let seatButton = "<a href="+ seatVenueURL + ">SeatGeek Search: "+seatVenueName+"</a>"
-	$(".card-action").append(seatButton);
+		//appends the button to card
+		let seatButton = "<a href="+ seatVenueURL + ">SeatGeek Search: "+seatVenueName+"</a>"
+		$(".card-action").append(seatButton);
 
-	});
+	}else{
+
+		//lets user know that no tickets were found
+		console.log("No events found on SeatGeek");
+		let seatButton = '<a href="https://www.seatgeek.com">Sorry, we could not find tickets</a>'
+		$(".card-action").append(seatButton);
+
+	}
+});
 
 
