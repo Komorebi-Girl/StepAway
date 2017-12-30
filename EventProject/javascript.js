@@ -6,7 +6,7 @@ let date = "";
 //Detroit Red Wings at New Jersey Devils - use as test for working
 
 //stubhub variables
-let currency = "";
+let stubCurrency = "";
 let stubMin = 0;
 let stubMax = 0;
 let stubLink = "";
@@ -41,23 +41,35 @@ $.ajax({
 		console.log('StubURL:' + stubLink);
 
 		//sets currency
-		currency = ' ' + stubData[0].ticketInfo.minPriceWithCurrencyCode.currency;
+		stubCurrency = stubData[0].ticketInfo.minPriceWithCurrencyCode.currency;
 	
 		//sets min value
 		stubMin = stubData[0].ticketInfo.minPriceWithCurrencyCode.amount;
-		console.log('Stub Min: ' + stubMin + currency);
+		console.log('Stub Min: ' + stubMin + stubCurrency);
 
 		//sets max value
 		stubMax = stubData[0].ticketInfo.maxPriceWithCurrencyCode.amount;
-		console.log('Stub Max: ' + stubMax + currency);
+		console.log('Stub Max: ' + stubMax + stubCurrency);
+
+  	var nf = new Intl.NumberFormat(["en-US"], {  
+    	style: "currency",  
+    	currency: stubCurrency,  
+    	currencyDisplay: "symbol",  
+    	maximumFractionDigit: 2,
+    	minimumFractionDigits: 2  
+    })
+    
+  	//reformats min price into $ddd.cc format
+    let stubMinFormatted = nf.format(stubMin);
+  	console.log('Stub Min: ' + stubMinFormatted);
 
 		//appends button to card
-		let stubButton = '<a href='+'"'+stubLink+'"'+'> Stubhub starting at: ' + stubMin +' ' + currency + '</a>';
+		let stubButton = '<a href='+'"'+stubLink+'"'+'> Stubhub low as: ' + stubMinFormatted + '</a>';
 		$(".card-action").append(stubButton);
 
 	}else{
 
-		//lets user know that know tickets were found
+		//lets user know that no tickets were found
 		console.log("No events found on Stubhub");
 		let stubButton = '<a href="https://www.stubhub.com">Sorry, we could not find tickets</a>'
 		$(".card-action").append(stubButton);
