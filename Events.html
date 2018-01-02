@@ -86,6 +86,23 @@
         }
     }
 
+    $(document).ready(function() {
+
+      var Latitude = sessionStorage.getItem("Latitude");
+      var Longitude = sessionStorage.getItem("Longitude");
+
+      $("#idEventsList").empty(); 
+      $("#idButtons").empty();
+      var eventdate = "Today";
+      var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+       "&where=" + Latitude + "," + Longitude + "&within=" + radius;
+
+      sessionStorage.clear();
+
+      updateEventsObj(queryURL);
+
+    });  
+
     $("#submitButton").on("click", function() { 
       
       pagenum = 1;
@@ -201,7 +218,11 @@
                                        results.events.event[i].city_name + "~" +
                                        results.events.event[i].region_abbr) ;
 
-          var title = $("<h4>").text(results.events.event[i].title);
+          if (pagenum == 1) 
+            EventNum = pagenum * (i + 1);
+          else
+            EventNum = (pagenum * 10) + i + 1 - 10;
+          var title = $("<h4>").text(EventNum + ". " + results.events.event[i].title);
           eventsDiv.append(title);
           var venuename = $("<p>").text("Venue: " + results.events.event[i].venue_name);
           eventsDiv.append(venuename);
