@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Eventful API</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<style>
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+</style>
+
+<body>
+
+  <h2>Events in your Area</h2>
+  <div id="userinput">
+      <h4>Location:</h4>
+      <input type="text" name="location" id="location-input"></input>
+      <h4>Date:</h4>
+      <input type="text" name="date" id="date-input"></input>
+      <button name="submit" id="submitButton">Submit</button>
+  </div>
+  <hr>
+  <div id="idEventsList"></div>
+  <div id="idButtons"></div>
+
+  <div id="myModal" class="modal">
+
+    <div class="modal-content">
+        
+    </div>
+
+  </div>
+  
+  <script type="text/javascript">
+
+    var apikey = "nnfhgT4zJPgWPtTG";
+    var radius = 5;
+    var pagenum = 1;
+    var totalEvents = 0;
+
+    var modal = document.getElementById('myModal');
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    $("#submitButton").on("click", function() { 
+      
+      pagenum = 1;
+      $("#idEventsList").empty(); 
+      $("#idButtons").empty();
+      var eventdate = $("#date-input").val().trim();
+      var location = $("#location-input").val().trim();
+      var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+       "&location=" + location + "&within=" + radius;
+
+      updateEventsObj(queryURL);
+
+    });
+
+
+   $(document).on("click", "#NextButton", function(event) { 
+    
+    pagenum += 1;
+    $("#idEventsList").empty(); 
+    $("#idButtons").empty();
+    var eventdate = $("#date-input").val().trim();
+    var location = $("#location-input").val().trim();
+    var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+     "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
+
+    updateEventsObj(queryURL);
+
+   });
+
+
+  $(document).on("click", "#PreviousButton", function(event) { 
+    
+    pagenum -= 1;
+    $("#idEventsList").empty(); 
+    $("#idButtons").empty();
+    var eventdate = $("#date-input").val().trim();
+    var location = $("#location-input").val().trim();
+    var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+     "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
+
+    updateEventsObj(queryURL);
+
+  }); 
+
+  $(document).on("click", ".item", function(event) { 
+
+    $(".modal-content").empty();
+    
+    var eventClicked = $(this).attr("data-value");
+
+    var eventClickedArr = eventClicked.split("~");
+
+    modal.style.display = "block";
+
+    var eventsDivModal = $("<div class='itemModal'>");
+    var titleModal = $("<h4>").text(eventClickedArr[0]);
+    eventsDivModal.append(titleModal);
+    var venuenameModal = $("<p>").text("Venue: " + eventClickedArr[1]);
+    eventsDivModal.append(venuenameModal);
+    var venueaddressModal = $("<p>").text("Address: " + eventClickedArr[2]);
+    eventsDivModal.append(venueaddressModal);
+    var cityModal = $("<p>").text(eventClickedArr[3] + ", " + eventClickedArr[4]);
+    eventsDivModal.append(cityModal);
+    eventsDivModal.prepend("<span class='close'>&times;</span>")
+    $(".modal-content").append(eventsDivModal);
+    
+  
+  }); 
+
+  $(document).on("click", ".close", function(event) {
+
+    modal.style.display = "none";
+
+  });
+
+
+  function updateEventsObj(queryURL) {
+
+    $.ajax({
+      url: "https://cors-anywhere.herokuapp.com/" + queryURL,
+      method: 'GET'
+    }).done(function(response) {
+
+      var results = JSON.parse(response);
+
+      totalEvents = parseInt(results.total_items);
+
+      // alert("totalEvents: " + totalEvents);
+
+      if (pagenum == 1) {
+
+          if (totalEvents >= 10)
+            index = 10;
+          else
+            index = totalEvents;
+      }
+
+      if (pagenum > 1) {
+
+          if ((totalEvents / (pagenum * 10)) >= 1)
+              index = 10;
+          else 
+              index = totalEvents % 10;
+
+      }  
+
+      for (var i = 0; i < index; i++) {
+
+          var eventsDiv = $("<div class='item'><a href=''>");
+          eventsDiv.attr("data-value", results.events.event[i].title + "~" +
+                                       results.events.event[i].venue_name + "~" +
+                                       results.events.event[i].venue_address + "~" +
+                                       results.events.event[i].city_name + "~" +
+                                       results.events.event[i].region_abbr) ;
+
+          var title = $("<h4>").text(results.events.event[i].title);
+          eventsDiv.append(title);
+          var venuename = $("<p>").text("Venue: " + results.events.event[i].venue_name);
+          eventsDiv.append(venuename);
+          var venueaddress = $("<p>").text("Address: " + results.events.event[i].venue_address);
+          eventsDiv.append(venueaddress);
+          var city = $("<p>").text(results.events.event[i].city_name + ", " + results.events.event[i].region_abbr);
+          eventsDiv.append(city);
+          eventsDiv.append($("</a>"));
+          $("#idEventsList").append(eventsDiv);
+          $("#idEventsList").append("<hr>");  
+
+      }
+
+      if (pagenum > 1) {
+
+           var buttonsDiv = $("<br><div class='buttonsDiv'>");
+           var prevbutton = $("<button name='previous' id='PreviousButton'>< Previous</button>");
+           buttonsDiv.append(prevbutton);
+           
+           if ((totalEvents / (pagenum * 10)) >= 1) {
+
+               var nextbutton = $("<button name='next' id='NextButton'>Next ></button>");
+               buttonsDiv.append(nextbutton);
+           } 
+
+           $("#idButtons").append(buttonsDiv);
+       } 
+
+       else {
+
+           if (totalEvents > 10)  {
+
+               var buttonsDiv = $("<br><div class='buttonsDiv'>");
+               var nextbutton = $("<button name='next' id='NextButton'>Next ></button>");
+               buttonsDiv.append(nextbutton);
+               $("#idButtons").append(buttonsDiv);
+           } 
+
+       }
+
+           
+
+   }); 
+
+  }
+  
+  
+</script>
+
+</body>
+
+</html>
