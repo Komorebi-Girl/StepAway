@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <title>Geolocation</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 50%;
+        height:50%;
         width:50%;
       }
       /* Optional: Makes the sample page fill the window. */
@@ -29,7 +27,6 @@
       // failed.", it means you probably did not give permission for the browser to
       // locate you.
       var map, infoWindow;
-      var proxy = 'https://cors-anywhere.herokuapp.com/';
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: -34.397, lng: 150.644},
@@ -50,35 +47,22 @@
             infoWindow.open(map);
             map.setCenter(pos);
             map
-            //console.log(pos.lat);
+console.log(pos.lat);
             var positions= [
             ["40.485476","-74.420511", "Home" ],
             ["40.485335","-74.406086", "MiddleSchool"],
             [pos.lat,pos.lng]
             ];
-            var search = "=";
+
             var marker, i;
             for(i=0;i < positions.length;i++){
-              query = positions[i][0]+","+positions[i][1]+"|";
-              search=search+query;
               marker= new google.maps.Marker({
                 position: new google.maps.LatLng(positions[i][0],positions[i][1]),
                 map:map
               })
               console.log(marker);
             }
-            var loc = pos.lat+","+pos.lng;
-            // Slice off the last unnecessary pipe 
-            var final = search.slice(0,-1);
-            // Build the query
-            var queryURL = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+loc+"&destinations"+final+"&key=AIzaSyDjlTzVQx8XWIbdCeoNtgeGH0WCWMuigXs";
-            $.ajax({
-               url: proxy+queryURL,
-               method: 'GET'
-            }).done(function(response) {
-             console.log(response.rows[0].elements);
 
-              }); 
 
 
 
