@@ -93,18 +93,40 @@
     <div class="row" id="buttons high">
       <div class="col s12 m12 l12 valign-wrapper">
         <a class="waves-effect waves-light btn-large center-align" id="nearMeButton">Find Events Near Me Now</a> 
-        <a class="waves-effect waves-light btn-large center-align" id="findButton">Find Events Near My Destination</a> 
+        <a class="waves-effect waves-light btn-large center-align" id="findButton" href="Events.html">Find Events Near My Destination</a> 
       </div>
     </div>
 </div>
 
 <script type="text/javascript">
+
+$("#nearMeButton").on("click", function() { 
+
+    if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            console.log(pos);
+            sessionStorage.clear();
+            sessionStorage.setItem("Latitude", pos.lat);
+            sessionStorage.setItem("Longitude", pos.lng);
+            console.log("Session Latitude: " + sessionStorage.getItem("Latitude"));
+            console.log("Session Longitude: " + sessionStorage.getItem("Longitude"));
+            window.location.href = "Events.html";
+         });  
+    }         
+            
+});
+
 $(document).ready(function(){
  $('.slider').slider({
  	indicators: false,
  	interval: 10000,
  });
-})	
+});
+
 </script>
 	
 </body>
