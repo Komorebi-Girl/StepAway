@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Popup Trial</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="col s12 m12 l12 center-align" id="button-gallery"></div>
+  </div>
+</div> 
+
+<div class="modal modal-fixed-footer" id="modal1">
+  <div class="modal-content">
+    <h4 id="name"></h4>
+    <p id="picUrl"></p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae sapiente sint, sed eius dolore possimus recusandae aliquid! Molestiae, optio esse! Debitis modi omnis repellendus inventore doloribus recusandae molestiae beatae pariatur.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae sapiente sint, sed eius dolore possimus recusandae aliquid! Molestiae, optio esse! Debitis modi omnis repellendus inventore doloribus recusandae molestiae beatae pariatur.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae sapiente sint, sed eius dolore possimus recusandae aliquid! Molestiae, optio esse! Debitis modi omnis repellendus inventore doloribus recusandae molestiae beatae pariatur.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae sapiente sint, sed eius dolore possimus recusandae aliquid! Molestiae, optio esse! Debitis modi omnis repellendus inventore doloribus recusandae molestiae beatae pariatur.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae sapiente sint, sed eius dolore possimus recusandae aliquid! Molestiae, optio esse! Debitis modi omnis repellendus inventore doloribus recusandae molestiae beatae pariatur.</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="btn-flat modal-action modal-close waves-effect waves-red">Close</a>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    var title = "matrix";
+    var queryURL = "https://www.omdbapi.com/?s=" + title + "&y=&plot=short&apikey=trilogy";
+
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).done(function(response) {
+
+      var movies = response.Search;
+      for (var i = 0; i < movies.length; i++) {
+        console.log(movies[i].Title);
+        var a = $("<button>");
+        a.text(movies[i].Title);
+        a.addClass("btn");
+        a.addClass("modal-trigger");
+        a.addClass("waves-effect");
+        a.addClass("waves-light");
+        a.attr("data-name", movies[i].Title);
+        a.attr("data-url", movies[i].Poster);
+        a.attr("data-target", "modal1");
+        $("#button-gallery").append(a);
+      }
+
+    });
+
+    $(document.body).on("click",".modal-trigger",function(){
+      var name = $(this).attr("data-name");
+      var url = $(this).attr("data-url");
+      $("#name").html(name);
+      $("#picUrl").html(url);
+      $('#modal1').modal();
+
+
+    })
+
+
+  })
+
+ 
+
+</script>
+
+
+
+</body>
+</html>
