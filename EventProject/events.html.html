@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Events</title>
+  <title>Eventful API</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <script src="https://use.fontawesome.com/700dbb2bc1.js"></script>
@@ -12,7 +12,30 @@
 </head>
 
 <style>
+/* The Modal (background) */
 
+}
+/* Modal Content */
+/*.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}*/
+/* The Close Button */
+/*.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,*/
+/*.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}*/
 #userinput,#date-container,#location-container,#button-container{
   margin: 0 auto;
   margin-top: 10px;
@@ -69,9 +92,10 @@
     <p id="city"></p>
     <p id="region"></p> 
     <p>StubHub: <span id="stubHubLink"></span></p>
-    <p>SeatGeek: <span id ="seatGeekLink"></span></p>    
+    <p>SeatGeek: <span id ="seatGeekLink"></span></p> 
 </div>
   <div class="modal-footer">
+
     <a href="#!" class="btn-flat modal-action modal-close waves-effect waves-red">Close</a>
   </div>
 </div>
@@ -83,7 +107,11 @@
     var pagenum = 1;
     var totalEvents = 0;
     var modal = document.getElementById('myModal');
-    
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
     $(document).ready(function() {
       var Latitude = sessionStorage.getItem("Latitude");
       var Longitude = sessionStorage.getItem("Longitude");
@@ -95,7 +123,6 @@
       sessionStorage.clear();
       updateEventsObj(queryURL);
     });  
-
     $('#date-input').pickadate({
       selectMonths: true, // Creates a dropdown to control month
       selectYears: 2, // Creates a dropdown of 15 years to control year,
@@ -105,7 +132,6 @@
       format: 'mm/dd/yyyy',
       closeOnSelect: true // Close upon selecting a date,
     });
-
     $("#submitButton").on("click", function(e) { 
       
       e.preventDefault();
@@ -118,7 +144,6 @@
        "&location=" + location + "&within=" + radius;
       updateEventsObj(queryURL);
     });
-
    $(document).on("click", "#NextButton", function(event) { 
     
     pagenum += 1;
@@ -130,7 +155,6 @@
      "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
     updateEventsObj(queryURL);
    });
-
   $(document).on("click", "#PreviousButton", function(event) { 
     
     pagenum -= 1;
@@ -143,22 +167,23 @@
     updateEventsObj(queryURL);
   }); 
 
-  $(document.body).on("click", ".modal-trigger", function(event) { 
- 
-      var name = $(this).attr("data-name");
-      var address = $(this).attr("data-address");
-      var city = $(this).attr("data-city");
-      var region = $(this).attr("data-region");
-      var venue = $(this).attr("data-venue");
-      $("#name").html(name);
-      $("#venue").html(venue);
-      $("#address").html(address);
-      $("#city").html(city);
-      $("#region").html(region);
-      $('#modal1').modal();
 
-      let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
-      let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
+  $(document.body).on("click", ".modal-trigger", function(event) { 
+    
+    var name = $(this).attr("data-name");
+    var address = $(this).attr("data-address");
+    var city = $(this).attr("data-city");
+    var region = $(this).attr("data-region");
+    var venue = $(this).attr("data-venue");
+    $("#name").html(name);
+    $("#venue").html(venue);
+    $("#address").html(address);
+    $("#city").html(city);
+    $("#region").html(region);
+    $('#modal1').modal();
+
+    let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
+    let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
 
       //stubhub AJAX GET request
       $.ajax({
@@ -261,12 +286,12 @@
     });
   });
 
+
   $(document).on("click", ".close", function(event) {
+    modal.style.display = "none";
     $("#seatGeekLink").html("");
     $("#stubHubLink").html("");
-    modal.style.display = "none";
   });
-  
   function updateEventsObj(queryURL) {
     $.ajax({
       url: "https://cors-anywhere.herokuapp.com/" + queryURL,
@@ -357,6 +382,7 @@
            
    }); 
   }
+  
   
 </script>
 
