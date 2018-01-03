@@ -5,7 +5,9 @@
   <meta charset="utf-8">
   <title>Eventful API</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 </head>
 
 <style>
@@ -212,28 +214,46 @@
 
       for (var i = 0; i < index; i++) {
 
-          var eventsDiv = $("<div class='item'>");
-          
+          var eventsDiv = $("<ul class='collection'>");
+
+          var litag = $("<li class='collection-item avatar'>");
+          litag.append($("<img src='' alt='' class='circle'>"));
+          var spantag = $("<span class='title'>");
           EventNum = (pagenum * 10) + i + 1 - 10;
-          var title = $("<h4>").text(EventNum + ". " + results.events.event[i].title);
-          eventsDiv.append(title);
-          var venuename = $("<p>").text("Venue: " + results.events.event[i].venue_name);
-          eventsDiv.append(venuename);
-          var venueaddress = $("<p>").text("Address: " + results.events.event[i].venue_address);
-          eventsDiv.append(venueaddress);
-          var city = $("<p>").text(results.events.event[i].city_name + ", " + results.events.event[i].region_abbr);
-          eventsDiv.append(city);
-          eventsDiv.append($("</a>"));                         
-          var spantag = $("<span class='medium material-icons infoClick'>info</span>");
-          spantag.attr("data-value", results.events.event[i].title + "~" +
+          var title = EventNum + ". " + results.events.event[i].title;
+          spantag.append(title);
+          litag.append(spantag);
+
+          var venuetag = $("<p>");
+          var venuename = "Venue: " + results.events.event[i].venue_name;
+          venuetag.append(venuename);
+          venuetag.append($("<br>"));
+          var venueaddress = "Address: " + results.events.event[i].venue_address;
+          venuetag.append(venueaddress);
+          venuetag.append($("<br>"));
+          var city = results.events.event[i].city_name + ", " + results.events.event[i].region_abbr;
+          venuetag.append(city); 
+
+          litag.append(venuetag);
+
+          var atag = $("<a href='#!' class='secondary-content'>");
+          var itag = $("<i class='material-icons infoClick'>info</i>");
+          itag.attr("data-value", results.events.event[i].title + "~" +
                                        results.events.event[i].venue_name + "~" +
                                        results.events.event[i].venue_address + "~" +
                                        results.events.event[i].city_name + "~" +
                                        results.events.event[i].region_abbr) ;  
-          eventsDiv.append(spantag);
+          atag.append(itag);
+          var atagclose = $("</a>");
+          atag.append(atagclose);
+          var litagclose = $("</li>");
+          atag.append(litagclose);
 
+          litag.append(atag);
+          
+          eventsDiv.append(litag);
+          
           $("#idEventsList").append(eventsDiv);
-          $("#idEventsList").append("<hr>"); 
 
       }
 
