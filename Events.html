@@ -50,19 +50,57 @@
     cursor: pointer;
 }
 
+#userinput,#date-container,#location-container,#button-container{
+  margin: 0 auto;
+  margin-top: 10px;
+  padding: 10px;
+}
+
 </style>
 
 <body>
 
-  <h2>Events in your Area</h2>
-  <div id="userinput">
+  <!-- <h2>Events in your Area</h2> -->
+  <!-- <div id="userinput">
       <h4>Location:</h4>
       <input type="text" name="location" id="location-input"></input>
       <h4>Date:</h4>
       <input type="text" name="date" id="date-input"></input>
       <button name="submit" id="submitButton">Submit</button>
+  </div> -->
+  <!-- <hr> -->
+
+    <nav>
+    <div class="nav-wrapper orange">
+      <a href="#" class="brand-logo">StepAway</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="sass.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div id= "wrapper">
+    <div class= "row" id="userinput">
+      <form class="col s12">
+        <div class="row">
+          <div id="location-container" class="input-field col s6">
+            <i class="material-icons prefix">location_city</i>
+            <input id="location-input" type="text" class="validate">
+            <label for="icon_prefix">Location</label>
+          </div>
+          <div id="date-container" class="input-field col s4">
+            <i class="material-icons prefix">date_range</i>
+            <input id = "date-input" type="text" class="datepicker">
+            <label for="icon_prefix">Date</label>
+          </div>
+          <div id="button-container" class="col s2">
+            <button class="waves-effect waves-light btn center-align" id="submitButton">Submit</button>
+          </div>
+        </div>
+      </form>  
+    </div>
   </div>
   <hr>
+
   <div id="idEventsList"></div>
   <div id="idButtons"></div>
 
@@ -106,8 +144,19 @@
 
     });  
 
-    $("#submitButton").on("click", function() { 
+    $('#date-input').pickadate({
+      selectMonths: true, // Creates a dropdown to control month
+      selectYears: 2, // Creates a dropdown of 15 years to control year,
+      today: 'Today',
+      clear: 'Clear',
+      close: 'Ok',
+      format: 'mm/dd/yyyy',
+      closeOnSelect: true // Close upon selecting a date,
+    });
+
+    $("#submitButton").on("click", function(e) { 
       
+      e.preventDefault();
       pagenum = 1;
       $("#idEventsList").empty(); 
       $("#idButtons").empty();
@@ -115,6 +164,8 @@
       var location = $("#location-input").val().trim();
       var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
        "&location=" + location + "&within=" + radius;
+
+      console.log(queryURL);
 
       updateEventsObj(queryURL);
 
@@ -250,7 +301,7 @@
           atag.append(litagclose);
 
           litag.append(atag);
-          
+
           eventsDiv.append(litag);
           
           $("#idEventsList").append(eventsDiv);
@@ -260,12 +311,12 @@
       if (pagenum > 1) {
 
            var buttonsDiv = $("<br><div class='buttonsDiv'>");
-           var prevbutton = $("<button name='previous' id='PreviousButton'>< Previous</button>");
+           var prevbutton = $("<button name='previous' class='waves-effect waves-light btn center-align' id='PreviousButton'>< Previous</button>");
            buttonsDiv.append(prevbutton);
            
            if ((totalEvents / (pagenum * 10)) >= 1) {
 
-               var nextbutton = $("<button name='next' id='NextButton'>Next ></button>");
+               var nextbutton = $("<button name='next' class='waves-effect waves-light btn center-align' id='NextButton'>Next ></button>");
                buttonsDiv.append(nextbutton);
            } 
 
@@ -277,7 +328,7 @@
            if (totalEvents > 10)  {
 
                var buttonsDiv = $("<br><div class='buttonsDiv'>");
-               var nextbutton = $("<button name='next' id='NextButton'>Next ></button>");
+               var nextbutton = $("<button name='next' class='waves-effect waves-light btn center-align' id='NextButton'>Next ></button>");
                buttonsDiv.append(nextbutton);
                $("#idButtons").append(buttonsDiv);
            } 
