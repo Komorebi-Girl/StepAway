@@ -35,51 +35,56 @@
        console.log(queryURL);
       updateEventsObj(queryURL);
     });
-   $(document).on("click", "#NextButton", function(event) { 
+    $(document).on("click", "#NextButton", function(event) { 
     
-    pagenum += 1;
-    $("#idEventsList").empty(); 
-    $("#idButtons").empty();
-    var eventdate = $("#date-input").val().trim();
-    var location = $("#location-input").val().trim();
-    var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
-     "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
-    updateEventsObj(queryURL);
-   });
-  $(document).on("click", "#PreviousButton", function(event) { 
+     pagenum += 1;
+      $("#idEventsList").empty(); 
+      $("#idButtons").empty();
+      var eventdate = $("#date-input").val().trim();
+      var location = $("#location-input").val().trim();
+      var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+      "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
+      updateEventsObj(queryURL);
+    });
+    $(document).on("click", "#PreviousButton", function(event) { 
     
-    pagenum -= 1;
-    $("#idEventsList").empty(); 
-    $("#idButtons").empty();
-    var eventdate = $("#date-input").val().trim();
-    var location = $("#location-input").val().trim();
-    var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
-     "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
-    updateEventsObj(queryURL);
-  }); 
-  $(document).on("click", ".infoClick", function(event) { 
-    $(".modal-content").empty();
+      pagenum -= 1;
+      $("#idEventsList").empty(); 
+      $("#idButtons").empty();
+      var eventdate = $("#date-input").val().trim();
+      var location = $("#location-input").val().trim();
+      var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+      "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
+      updateEventsObj(queryURL);
+    }); 
+    $(document).on("click", ".infoClick", function(event) { 
+      $(".modal-content").empty();
     
-    var eventClicked = $(this).attr("data-value");
-    var eventClickedArr = eventClicked.split("~");
-    modal.style.display = "block";
-    var eventsDivModal = $("<div class='itemModal'>");
-    var titleModal = $("<h4>").text(eventClickedArr[0]);
-    eventsDivModal.append(titleModal);
-    var venuenameModal = $("<p>").text("Venue: " + eventClickedArr[1]);
-    eventsDivModal.append(venuenameModal);
-    var venueaddressModal = $("<p>").text("Address: " + eventClickedArr[2]);
-    eventsDivModal.append(venueaddressModal);
-    var cityModal = $("<p>").text(eventClickedArr[3] + ", " + eventClickedArr[4]);
-    eventsDivModal.append(cityModal);
-    eventsDivModal.prepend("<span class='close'>&times;</span>")
+      var eventClicked = $(this).attr("data-value");
+      var eventClickedArr = eventClicked.split("~");
+      modal.style.display = "block";
+
+      var eventsDivModal = $("<div class='itemModal'>");
+      var titleModal = $("<h4>").text(eventClickedArr[0]);
+      eventsDivModal.append(titleModal);
+
+      var venuenameModal = $("<p>").text("Venue: " + eventClickedArr[1]);
+      eventsDivModal.append(venuenameModal);
+
+      var venueaddressModal = $("<p>").text("Address: " + eventClickedArr[2]);
+      eventsDivModal.append(venueaddressModal);
+
+      var cityModal = $("<p>").text(eventClickedArr[3] + ", " + eventClickedArr[4]);
+      eventsDivModal.append(cityModal);
+      eventsDivModal.prepend("<span class='close'>&times;</span>")
+
     $(".modal-content").append(eventsDivModal);
     
   
-  }); 
-  $(document).on("click", ".close", function(event) {
+    }); 
+    $(document).on("click", ".close", function(event) {
     modal.style.display = "none";
-  });
+    });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -88,58 +93,61 @@
       // prompted by your browser. If you see the error "The Geolocation service
       // failed.", it means you probably did not give permission for the browser to
       // locate you.
-      var labels = '123456789';
-      var labelIndex = 0;
+    var labels = '123456789';
+    var labelIndex = 0;
 
-      var map, infoWindow, Geocoder;
-      var proxy = 'https://cors-anywhere.herokuapp.com/';
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 10,
-          
-        });
+    var map, infoWindow, Geocoder;
+    var proxy = 'https://cors-anywhere.herokuapp.com/';
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 10, 
+      });
         //var circle= Circle({radius:8050,center:{lat: -34.397, lng: 150.644}})
        // map.fitBounds(circle.getBounds())
-        infoWindow = new google.maps.InfoWindow;
+      infoWindow = new google.maps.InfoWindow;
 
            // infoWindow.setPosition(pos);
            // infoWindow.setContent('Location found.');
-            infoWindow.open(map);
+      infoWindow.open(map);
             //var center=positions[0][0],positions[0][1];
-            $("#submitButton").on("click", function() {
-            Geocoder= google.maps.Geocoder;
-            console.log(Geocoder);
-            Geocoder.geocode(){
-            address: string,
-            }
-          });
-            if(Number(positions[0]!==undefined)){
-            map.setCenter({lat: Number(positions[0][0]), lng: Number(positions[0][1])});
+ /*     $("#submitButton").on("click", function() {
+        Geocoder= google.maps.Geocoder,{
+        
+
+        //Geocoder.geocode()
+        }
+ 
+        
+      });*/
+
+      if(Number(positions[0]!==undefined)){
+        map.setCenter({lat: Number(positions[0][0]), lng: Number(positions[0][1])});
           
-            map
-            console.log(positions);
-            var search = "=";
-            var marker, i;
+        map
+        console.log(positions);
+        var search = "=";
+        var marker, i;
             
-            for(i=0;i < positions.length;i++){
-              queried = positions[i][0]+","+positions[i][1]+"|";
-              search=search+queried;
-              marker= new google.maps.Marker({
-                position: new google.maps.LatLng(positions[i][0],positions[i][1]),
-                label: labels[labelIndex++ % labels.length],
-                map:map
-              })
+        for(i=0;i < positions.length;i++){
+          queried = positions[i][0]+","+positions[i][1]+"|";
+          search=search+queried;
+
+          marker= new google.maps.Marker({
+            position: new google.maps.LatLng(positions[i][0],positions[i][1]),
+            label: labels[labelIndex++ % labels.length],
+            map:map
+          })
               //var infowindow = new google.maps.InfoWindow({
               //content: i
               //});
 
-              console.log(marker);
+          console.log(marker);
           
-            }
+        }
 
-            console.log(search);
-          };
+        console.log(search);
+      };
 /*            var loc = pos.lat+","+pos.lng;
             // Slice off the last unnecessary pipe 
             var final = search.slice(0,-1);
@@ -152,7 +160,7 @@
              console.log(response.rows[0].elements);
 
               }); */
-              }
+      }
 
 
 
