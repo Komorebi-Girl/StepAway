@@ -77,36 +77,36 @@
 </div>
 
   
-  <script type="text/javascript">
-    var apikey = "nnfhgT4zJPgWPtTG";
-    var radius = 5;
-    var pagenum = 1;
-    var totalEvents = 0;
-    var modal = document.getElementById('myModal');
+<script type="text/javascript">
+  var apikey = "nnfhgT4zJPgWPtTG";
+  var radius = 5;
+  var pagenum = 1;
+  var totalEvents = 0;
+  var modal = document.getElementById('myModal');
     
-    $(document).ready(function() {
-      var Latitude = sessionStorage.getItem("Latitude");
-      var Longitude = sessionStorage.getItem("Longitude");
-      $("#idEventsList").empty(); 
-      $("#idButtons").empty();
-      var eventdate = "Today";
-      var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
+  $(document).ready(function() {
+    var Latitude = sessionStorage.getItem("Latitude");
+    var Longitude = sessionStorage.getItem("Longitude");
+    $("#idEventsList").empty(); 
+    $("#idButtons").empty();
+    var eventdate = "Today";
+    var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
        "&where=" + Latitude + "," + Longitude + "&within=" + radius;
       sessionStorage.clear();
-      updateEventsObj(queryURL);
-    });  
+    updateEventsObj(queryURL);
+  });  
 
-    $('#date-input').pickadate({
-      selectMonths: true, // Creates a dropdown to control month
-      selectYears: 2, // Creates a dropdown of 15 years to control year,
-      today: 'Today',
-      clear: 'Clear',
-      close: 'Ok',
-      format: 'mm/dd/yyyy',
-      closeOnSelect: true // Close upon selecting a date,
-    });
+  $('#date-input').pickadate({
+    selectMonths: true, // Creates a dropdown to control month
+    selectYears: 2, // Creates a dropdown of 15 years to control year,
+    today: 'Today',
+    clear: 'Clear',
+    close: 'Ok',
+    format: 'mm/dd/yyyy',
+    closeOnSelect: true // Close upon selecting a date,
+  });
 
-    $("#submitButton").on("click", function(e) { 
+  $("#submitButton").on("click", function(e) { 
       
       e.preventDefault();
       pagenum = 1;
@@ -144,21 +144,24 @@
   }); 
 
   $(document.body).on("click", ".modal-trigger", function(event) { 
- 
-      var name = $(this).attr("data-name");
-      var address = $(this).attr("data-address");
-      var city = $(this).attr("data-city");
-      var region = $(this).attr("data-region");
-      var venue = $(this).attr("data-venue");
-      $("#name").html(name);
-      $("#venue").html(venue);
-      $("#address").html(address);
-      $("#city").html(city);
-      $("#region").html(region);
-      $('#modal1').modal();
 
-      let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
-      let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
+    $('#modal1').modal();
+    $("#seatGeekLink").html("");
+    $("#stubHubLink").html("");
+    var name = $(this).attr("data-name");
+    var address = $(this).attr("data-address");
+    var city = $(this).attr("data-city");
+    var region = $(this).attr("data-region");
+    var venue = $(this).attr("data-venue");
+    $("#name").html(name);
+    $("#venue").html(venue);
+    $("#address").html(address);
+    $("#city").html(city);
+    $("#region").html(region);
+    
+
+    let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
+    let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
 
       //stubhub AJAX GET request
       $.ajax({
@@ -262,11 +265,9 @@
   });
 
   $(document).on("click", ".close", function(event) {
-    $("#seatGeekLink").html("");
-    $("#stubHubLink").html("");
     modal.style.display = "none";
   });
-  
+
   function updateEventsObj(queryURL) {
     $.ajax({
       url: "https://cors-anywhere.herokuapp.com/" + queryURL,
