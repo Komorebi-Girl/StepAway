@@ -6,6 +6,7 @@
   <title>Eventful API</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  <script src="https://use.fontawesome.com/700dbb2bc1.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 </head>
@@ -19,7 +20,7 @@
     padding-top: 100px; /* Location of the box */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
+    width: 100%;  Full width 
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
@@ -27,28 +28,28 @@
 }
 
 /* Modal Content */
-.modal-content {
+/*.modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-}
+}*/
 
 /* The Close Button */
-.close {
+/*.close {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+.close:hover,*/
+/*.close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
-}
+}*/
 
 #userinput,#date-container,#location-container,#button-container{
   margin: 0 auto;
@@ -56,20 +57,17 @@
   padding: 10px;
 }
 
+.white-text{
+ color:white;
+}
+
+.thumbnail{
+ color: #26a69a ;
+}
+
 </style>
 
 <body>
-
-  <!-- <h2>Events in your Area</h2> -->
-  <!-- <div id="userinput">
-      <h4>Location:</h4>
-      <input type="text" name="location" id="location-input"></input>
-      <h4>Date:</h4>
-      <input type="text" name="date" id="date-input"></input>
-      <button name="submit" id="submitButton">Submit</button>
-  </div> -->
-  <!-- <hr> -->
-
     <nav>
     <div class="nav-wrapper orange">
       <a href="#" class="brand-logo">StepAway</a>
@@ -165,8 +163,6 @@
       var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
        "&location=" + location + "&within=" + radius;
 
-      console.log(queryURL);
-
       updateEventsObj(queryURL);
 
     });
@@ -203,27 +199,43 @@
 
   $(document).on("click", ".infoClick", function(event) { 
 
-    $(".modal-content").empty();
+    // $(".modal-content").empty();
     
     var eventClicked = $(this).attr("data-value");
 
+    alert(eventClicked);
+
     var eventClickedArr = eventClicked.split("~");
 
-    modal.style.display = "block";
+    var eventsparent = $("<div class='row'>");
+    var eventschild = $("<div class='col s12 m7'>");
+    var eventsDiv = $("<div class='card'>");
 
-    var eventsDivModal = $("<div class='itemModal'>");
-    var titleModal = $("<h4>").text(eventClickedArr[0]);
-    eventsDivModal.append(titleModal);
-    var venuenameModal = $("<p>").text("Venue: " + eventClickedArr[1]);
-    eventsDivModal.append(venuenameModal);
-    var venueaddressModal = $("<p>").text("Address: " + eventClickedArr[2]);
-    eventsDivModal.append(venueaddressModal);
-    var cityModal = $("<p>").text(eventClickedArr[3] + ", " + eventClickedArr[4]);
-    eventsDivModal.append(cityModal);
-    eventsDivModal.prepend("<span class='close'>&times;</span>")
-    $(".modal-content").append(eventsDivModal);
+    var cardimage = $("<div class='card-image'>");
+    cardimage.append("<img src='images/card-image.jpg'>");
+    cardimage.append("<span class='card-title'>");
+    var titleModal = eventClickedArr[0];
+    cardimage.append(titleModal);
+    eventsDiv.append(cardimage);  
+     
+    var eventdetails = $("<div class='card-content'>");
+    eventdetails.append("<p>");
+    var venuename = eventClickedArr[1];
+    eventdetails.append(venuename);
+    var venueaddress = eventClickedArr[2];
+    eventdetails.append(venueaddress);
+    var citystate = eventClickedArr[3] + ", " + eventClickedArr[4];
+    eventdetails.append(citystate);
+    eventsDiv.append(eventdetails);
     
-  
+    
+    var cardaction = $("<div class='card-action'>");
+    cardaction.append("<a href='#''>This is a link</a>");
+    eventsDiv.append(cardaction);
+
+    eventschild.append(eventsDiv);
+    eventsparent.append(eventschild);
+   
   }); 
 
   $(document).on("click", ".close", function(event) {
@@ -268,12 +280,18 @@
           var eventsDiv = $("<ul class='collection'>");
 
           var litag = $("<li class='collection-item avatar'>");
-          litag.append($("<img src='' alt='' class='circle'>"));
-          var spantag = $("<span class='title'>");
+
           EventNum = (pagenum * 10) + i + 1 - 10;
-          var title = EventNum + ". " + results.events.event[i].title;
-          spantag.append(title);
-          litag.append(spantag);
+
+          var newSpan= $("<span class='fa-stack fa-2x'>");
+          var circle = $("<i class='fa fa-circle fa-stack-2x icon-cog thumbnail'>");
+          var number = $("<strong class='fa-stack-1x white-text'>").html(EventNum);
+          newSpan.append(circle);
+          newSpan.append(number);
+        
+          var eventHeader = $("<p>").html(results.events.event[i].title);
+          eventHeader.prepend(newSpan)
+          litag.append(eventHeader);
 
           var venuetag = $("<p>");
           var venuename = "Venue: " + results.events.event[i].venue_name;
