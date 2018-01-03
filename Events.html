@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>Eventful API</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://use.fontawesome.com/700dbb2bc1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
@@ -50,6 +51,13 @@
     cursor: pointer;
 }
 
+.white-text{
+  color:white;
+}
+
+.thumbnail{
+  color: #26a69a;
+}
 </style>
 
 <body>
@@ -217,12 +225,25 @@
           var eventsDiv = $("<ul class='collection'>");
 
           var litag = $("<li class='collection-item avatar'>");
-          litag.append($("<img src='' alt='' class='circle'>"));
-          var spantag = $("<span class='title'>");
+          // litag.append($("<img src='' alt='' class='circle'>"));
+          // var spantag = $("<span class='title'>");
           EventNum = (pagenum * 10) + i + 1 - 10;
-          var title = EventNum + ". " + results.events.event[i].title;
-          spantag.append(title);
-          litag.append(spantag);
+
+
+          var newSpan= $("<span class='fa-stack fa-2x'>");
+          var circle = $("<i class='fa fa-circle fa-stack-2x icon-cog thumbnail'>");
+          var number = $("<strong class='fa-stack-1x white-text'>").html(EventNum);
+          newSpan.append(circle);
+          newSpan.append(number);
+        
+          var eventHeader = $("<p>").html(results.events.event[i].title);
+          eventHeader.prepend(newSpan)
+          litag.append(eventHeader);
+
+
+          // var title = newSpan;
+          // spantag.append(title);
+          // litag.append(spantag);
 
           var venuetag = $("<p>");
           var venuename = "Venue: " + results.events.event[i].venue_name;
