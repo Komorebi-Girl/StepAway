@@ -1,27 +1,15 @@
 let eventTitle ="Detroit Red Wings at New Jersey Devils";
 let city = "Newark";
 let venue = "Prudential Center"
-let date = "";
+
+
+//name,venue,city - replace
 
 //Detroit Red Wings at New Jersey Devils - use as test for working
 
-//stubhub variables
-let stubCurrency = "";
-let stubMin = 0;
-let stubMax = 0;
-let stubLink = "";
-
-//seatgeek variables
-let seatVenueName = "";
-let seatVenueURL = "";
-let seatMin = 0;
-let seatMax = 0;
-let seatAvg = 0;
-
-
-//stubhub Territory
+//stubhub territory
 let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
-let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+eventTitle+"&city="+city;
+let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
 
 //stubhub AJAX GET request
 $.ajax({
@@ -29,6 +17,12 @@ $.ajax({
   method: "GET",
   headers: {"Authorization": stubToken}
 }).done(function(response) {
+
+	//stubhub variables
+	let stubCurrency = "";
+	let stubMin = 0;
+	let stubMax = 0;
+	let stubLink = "";
 
 	//sets response to stubData and makes sure something is returned
 	let stubData = response.events;
@@ -51,7 +45,7 @@ $.ajax({
 		stubMax = stubData[0].ticketInfo.maxPriceWithCurrencyCode.amount;
 		console.log('Stub Max: ' + stubMax + stubCurrency);
 
-  	var nf = new Intl.NumberFormat(["en-US"], {  
+  	let nf = new Intl.NumberFormat(["en-US"], {  
     	style: "currency",  
     	currency: stubCurrency,  
     	currencyDisplay: "symbol",  
@@ -64,22 +58,21 @@ $.ajax({
   	console.log('Stub Min: ' + stubMinFormatted);
 
 		//appends button to card
-		let stubButton = '<a href='+'"'+stubLink+'"'+'> Stubhub low as: ' + stubMinFormatted + '</a>';
-		$(".card-action").append(stubButton);
+		let stubButton = '<a href='+'"'+stubLink+'"'+'> As low as: ' + stubMinFormatted + '</a>';
+		$("#stubdump").append(stubButton);
 
 	}else{
 
 		//lets user know that no tickets were found
 		console.log("No events found on Stubhub");
-		let stubButton = '<a href="https://www.stubhub.com">Sorry, we could not find tickets</a>'
-		$(".card-action").append(stubButton);
+		let stubButton = '<a href="https://www.stubhub.com">Sorry, we could not find tickets.</a>'
+		$("#stubdump").append(stubButton);
 
 	}
 });
 
 
-
-//SeatGeeek Territory
+//SeatGeeek territory
 
 let seatgeekURL = "https://api.seatgeek.com/2/venues?client_id=NzUzODA4OXwxNTEzODc4OTMwLjk3&city="+city+"&q="+venue;
 
@@ -88,6 +81,10 @@ $.ajax({
 	url: seatgeekURL,
   method: "GET"
 }).done(function(response) {
+
+	//seatgeek variables
+	let seatVenueName = "";
+	let seatVenueURL = "";
 
 	//sets response to seatData and makes sure something is returned
 	let seatData = response.venues;
@@ -103,17 +100,15 @@ $.ajax({
 		console.log("Ticket URL: " + seatVenueURL);
 
 		//appends the button to card
-		let seatButton = "<a href="+ seatVenueURL + ">SeatGeek Search: "+seatVenueName+"</a>"
-		$(".card-action").append(seatButton);
+		let seatButton = "<a href="+ seatVenueURL + ">"+seatVenueName+"</a>"
+		$("#seatgeekdump").append(seatButton);
 
 	}else{
 
 		//lets user know that no tickets were found
 		console.log("No events found on SeatGeek");
 		let seatButton = '<a href="https://www.seatgeek.com">Sorry, we could not find tickets</a>'
-		$(".card-action").append(seatButton);
+		$("#seatgeekdump").append(seatButton);
 
 	}
 });
-
-
