@@ -93,10 +93,9 @@
       // prompted by your browser. If you see the error "The Geolocation service
       // failed.", it means you probably did not give permission for the browser to
       // locate you.
-    var labels = '123456789';
-    var labelIndex = 0;
+ 
 
-    var map, infoWindow, Geocoder;
+    var map, infoWindow, geocoder;
     var proxy = 'https://cors-anywhere.herokuapp.com/';
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -111,31 +110,29 @@
            // infoWindow.setContent('Location found.');
       infoWindow.open(map);
             //var center=positions[0][0],positions[0][1];
- /*     $("#submitButton").on("click", function() {
-        Geocoder= google.maps.Geocoder,{
-        
-
-        //Geocoder.geocode()
-        }
- 
-        
-      });*/
-
+           contMap();
+      }
+    function contMap(){
       if(Number(positions[0]!==undefined)){
-        map.setCenter({lat: Number(positions[0][0]), lng: Number(positions[0][1])});
+        //map.setCenter({lat: Number(positions[0][0]), lng: Number(positions[0][1])});
           
         map
         console.log(positions);
         var search = "=";
         var marker, i;
-            
+        var labels=0;
         for(i=0;i < positions.length;i++){
+          $("#submitButton").on("click", function() {
+            labels=0;
+          });
+          labels++;
+
           queried = positions[i][0]+","+positions[i][1]+"|";
           search=search+queried;
 
           marker= new google.maps.Marker({
             position: new google.maps.LatLng(positions[i][0],positions[i][1]),
-            label: labels[labelIndex++ % labels.length],
+            label: labels.toString(),
             map:map
           })
               //var infowindow = new google.maps.InfoWindow({
@@ -147,8 +144,17 @@
         }
 
         console.log(search);
-      };
-/*            var loc = pos.lat+","+pos.lng;
+      }
+      geocoder= new google.maps.Geocoder();
+
+      $("#submitButton").on("click", function() {
+        geocodeAddress(geocoder, map);
+        console.log(geocodeAddress);
+      });
+
+
+
+          /*var loc = pos.lat+","+pos.lng;
             // Slice off the last unnecessary pipe 
             var final = search.slice(0,-1);
             // Build the query
@@ -160,6 +166,25 @@
              console.log(response.rows[0].elements);
 
               }); */
+
+      }
+      
+      function geocodeAddress(geocoder, resultsMap) {
+        var address = document.getElementById("location-input").value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            resultsMap.setCenter(results[0].geometry.location);
+            
+            var marker = new google.maps.Marker({
+              map: resultsMap,
+              position: results[0].geometry.location,
+            });
+
+            console.log(results[0].geometry.location)
+          } else {
+              alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
       }
 
 
@@ -262,7 +287,7 @@
                $("#idButtons").append(buttonsDiv);
            } 
        }
-         initMap();  
+         contMap();  
    }); 
   }
 
