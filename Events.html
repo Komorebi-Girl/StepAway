@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Eventful API</title>
+  <title>Events</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <script src="https://use.fontawesome.com/700dbb2bc1.js"></script>
@@ -12,59 +12,18 @@
 </head>
 
 <style>
-/* The Modal (background) */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%;  Full width 
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-/*.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}*/
-
-/* The Close Button */
-/*.close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,*/
-/*.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}*/
 
 #userinput,#date-container,#location-container,#button-container{
   margin: 0 auto;
   margin-top: 10px;
   padding: 10px;
 }
-
 .white-text{
  color:white;
 }
-
 .thumbnail{
  color: #26a69a ;
 }
-
 </style>
 
 <body>
@@ -102,44 +61,37 @@
   <div id="idEventsList"></div>
   <div id="idButtons"></div>
 
-  <div id="myModal" class="modal">
-
-    <div class="modal-content">
-        
-    </div>
-
+<div class="modal modal-fixed-footer" id="modal1">
+  <div class="modal-content">
+    <h4 id="name"></h4>
+    <p id="venue"></p>
+    <p id="address"></p>
+    <p id="city"></p>
+    <p id="region"></p>    
+</div>
+  <div class="modal-footer">
+    <a href="#!" class="btn-flat modal-action modal-close waves-effect waves-red">Close</a>
   </div>
+</div>
+
   
   <script type="text/javascript">
-
     var apikey = "nnfhgT4zJPgWPtTG";
     var radius = 5;
     var pagenum = 1;
     var totalEvents = 0;
-
     var modal = document.getElementById('myModal');
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
+    
     $(document).ready(function() {
-
       var Latitude = sessionStorage.getItem("Latitude");
       var Longitude = sessionStorage.getItem("Longitude");
-
       $("#idEventsList").empty(); 
       $("#idButtons").empty();
       var eventdate = "Today";
       var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
        "&where=" + Latitude + "," + Longitude + "&within=" + radius;
-
       sessionStorage.clear();
-
       updateEventsObj(queryURL);
-
     });  
 
     $('#date-input').pickadate({
@@ -162,11 +114,8 @@
       var location = $("#location-input").val().trim();
       var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
        "&location=" + location + "&within=" + radius;
-
       updateEventsObj(queryURL);
-
     });
-
 
    $(document).on("click", "#NextButton", function(event) { 
     
@@ -177,11 +126,8 @@
     var location = $("#location-input").val().trim();
     var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
      "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
-
     updateEventsObj(queryURL);
-
    });
-
 
   $(document).on("click", "#PreviousButton", function(event) { 
     
@@ -192,97 +138,53 @@
     var location = $("#location-input").val().trim();
     var queryURL = "http://api.eventful.com/json/events/search?app_key=" + apikey + "&date=" + eventdate + 
      "&location=" + location + "&page_number=" + pagenum + "&within=" + radius;
-
     updateEventsObj(queryURL);
-
   }); 
 
-  $(document).on("click", ".infoClick", function(event) { 
+  $(document.body).on("click", ".modal-trigger", function(event) { 
+ 
+      var name = $(this).attr("data-name");
+      var address = $(this).attr("data-address");
+      var city = $(this).attr("data-city");
+      var region = $(this).attr("data-region");
+      var venue = $(this).attr("data-venue");
+      $("#name").html(name);
+      $("#venue").html(venue);
+      $("#address").html(address);
+      $("#city").html(city);
+      $("#region").html(region);
+      $('#modal1').modal();
 
-    // $(".modal-content").empty();
-    
-    var eventClicked = $(this).attr("data-value");
-
-    alert(eventClicked);
-
-    var eventClickedArr = eventClicked.split("~");
-
-    var eventsparent = $("<div class='row'>");
-    var eventschild = $("<div class='col s12 m7'>");
-    var eventsDiv = $("<div class='card'>");
-
-    var cardimage = $("<div class='card-image'>");
-    cardimage.append("<img src='images/card-image.jpg'>");
-    cardimage.append("<span class='card-title'>");
-    var titleModal = eventClickedArr[0];
-    cardimage.append(titleModal);
-    eventsDiv.append(cardimage);  
-     
-    var eventdetails = $("<div class='card-content'>");
-    eventdetails.append("<p>");
-    var venuename = eventClickedArr[1];
-    eventdetails.append(venuename);
-    var venueaddress = eventClickedArr[2];
-    eventdetails.append(venueaddress);
-    var citystate = eventClickedArr[3] + ", " + eventClickedArr[4];
-    eventdetails.append(citystate);
-    eventsDiv.append(eventdetails);
-    
-    
-    var cardaction = $("<div class='card-action'>");
-    cardaction.append("<a href='#''>This is a link</a>");
-    eventsDiv.append(cardaction);
-
-    eventschild.append(eventsDiv);
-    eventsparent.append(eventschild);
    
-  }); 
-
-  $(document).on("click", ".close", function(event) {
-
-    modal.style.display = "none";
-
   });
 
-
+  $(document).on("click", ".close", function(event) {
+    modal.style.display = "none";
+  });
   function updateEventsObj(queryURL) {
-
     $.ajax({
       url: "https://cors-anywhere.herokuapp.com/" + queryURL,
       method: 'GET'
     }).done(function(response) {
-
       var results = JSON.parse(response);
-
       totalEvents = parseInt(results.total_items);
-
       // alert("totalEvents: " + totalEvents);
-
       if (pagenum == 1) {
-
           if (totalEvents >= 10)
             index = 10;
           else
             index = totalEvents;
       }
-
       if (pagenum > 1) {
-
           if ((totalEvents / (pagenum * 10)) >= 1)
               index = 10;
           else 
               index = totalEvents % 10;
-
       }  
-
       for (var i = 0; i < index; i++) {
-
           var eventsDiv = $("<ul class='collection'>");
-
           var litag = $("<li class='collection-item avatar'>");
-
           EventNum = (pagenum * 10) + i + 1 - 10;
-
           var newSpan= $("<span class='fa-stack fa-2x'>");
           var circle = $("<i class='fa fa-circle fa-stack-2x icon-cog thumbnail'>");
           var number = $("<strong class='fa-stack-1x white-text'>").html(EventNum);
@@ -292,7 +194,6 @@
           var eventHeader = $("<p>").html(results.events.event[i].title);
           eventHeader.prepend(newSpan)
           litag.append(eventHeader);
-
           var venuetag = $("<p>");
           var venuename = "Venue: " + results.events.event[i].venue_name;
           venuetag.append(venuename);
@@ -302,63 +203,54 @@
           venuetag.append($("<br>"));
           var city = results.events.event[i].city_name + ", " + results.events.event[i].region_abbr;
           venuetag.append(city); 
-
           litag.append(venuetag);
-
           var atag = $("<a href='#!' class='secondary-content'>");
           var itag = $("<i class='material-icons infoClick'>info</i>");
           itag.attr("data-value", results.events.event[i].title + "~" +
                                        results.events.event[i].venue_name + "~" +
                                        results.events.event[i].venue_address + "~" +
                                        results.events.event[i].city_name + "~" +
-                                       results.events.event[i].region_abbr) ;  
+                                       results.events.event[i].region_abbr) ; 
+          itag.attr("data-name", results.events.event[i].title);   
+          itag.attr("data-venue", results.events.event[i].venue_name); 
+          itag.attr("data-address", results.events.event[i].venue_address);  
+          itag.attr("data-city", results.events.event[i].city_name); 
+          itag.attr("data-region", results.events.event[i].region_abbr); 
+          itag.addClass("modal-trigger");
+          itag.attr("data-target", "modal1");
+                          
           atag.append(itag);
           var atagclose = $("</a>");
           atag.append(atagclose);
           var litagclose = $("</li>");
           atag.append(litagclose);
-
           litag.append(atag);
-
           eventsDiv.append(litag);
           
           $("#idEventsList").append(eventsDiv);
-
       }
-
       if (pagenum > 1) {
-
            var buttonsDiv = $("<br><div class='buttonsDiv'>");
            var prevbutton = $("<button name='previous' class='waves-effect waves-light btn center-align' id='PreviousButton'>< Previous</button>");
            buttonsDiv.append(prevbutton);
            
            if ((totalEvents / (pagenum * 10)) >= 1) {
-
                var nextbutton = $("<button name='next' class='waves-effect waves-light btn center-align' id='NextButton'>Next ></button>");
                buttonsDiv.append(nextbutton);
            } 
-
            $("#idButtons").append(buttonsDiv);
        } 
-
        else {
-
            if (totalEvents > 10)  {
-
                var buttonsDiv = $("<br><div class='buttonsDiv'>");
                var nextbutton = $("<button name='next' class='waves-effect waves-light btn center-align' id='NextButton'>Next ></button>");
                buttonsDiv.append(nextbutton);
                $("#idButtons").append(buttonsDiv);
            } 
-
        }
-
            
-
    }); 
-
   }
-  
   
 </script>
 
