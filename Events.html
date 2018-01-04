@@ -82,7 +82,6 @@
   var radius = 5;
   var pagenum = 1;
   var totalEvents = 0;
-  var modal = document.getElementById('myModal');
     
   $(document).ready(function() {
     var Latitude = sessionStorage.getItem("Latitude");
@@ -146,6 +145,7 @@
   $(document.body).on("click", ".modal-trigger", function(event) { 
 
     $('#modal1').modal();
+    $('#modal1').modal('open');
     $("#seatGeekLink").html("");
     $("#stubHubLink").html("");
     var name = $(this).attr("data-name");
@@ -264,9 +264,7 @@
     });
   });
 
-  $(document).on("click", ".close", function(event) {
-    modal.style.display = "none";
-  });
+
 
   function updateEventsObj(queryURL) {
     $.ajax({
