@@ -34,6 +34,10 @@
 .brand-logo{
   font-family: 'Rancho', cursive;
 }
+
+#NextButton {
+  margin-left: 2em;
+}
 </style>
 
 <body>
@@ -91,7 +95,8 @@
   var radius = 5;
   var pagenum = 1;
   var totalEvents = 0;
-    
+  
+  // Grabs and stores user location to find events near them immediately  
   $(document).ready(function() {
     var Latitude = sessionStorage.getItem("Latitude");
     var Longitude = sessionStorage.getItem("Longitude");
@@ -104,6 +109,8 @@
     updateEventsObj(queryURL);
   });  
 
+
+  // Below is the code for the date picker in the nav bar
   $('#date-input').pickadate({
     selectMonths: true, // Creates a dropdown to control month
     selectYears: 2, // Creates a dropdown of 15 years to control year,
@@ -114,6 +121,8 @@
     closeOnSelect: true // Close upon selecting a date,
   });
 
+
+  // Takes in user input to formulate get request
   $("#submitButton").on("click", function(e) { 
       
       e.preventDefault();
@@ -127,6 +136,7 @@
       updateEventsObj(queryURL);
     });
 
+  // Next button grabs info on additional events when number of events exceeds ten
    $(document).on("click", "#NextButton", function(event) { 
     
     pagenum += 1;
@@ -139,6 +149,7 @@
     updateEventsObj(queryURL);
    });
 
+   // Button goes to the previous page
   $(document).on("click", "#PreviousButton", function(event) { 
     
     pagenum -= 1;
@@ -151,6 +162,7 @@
     updateEventsObj(queryURL);
   }); 
 
+  // Info button opens modal and grabs content to display in it
   $(document.body).on("click", ".modal-trigger", function(event) { 
 
     $('#modal1').modal();
@@ -168,7 +180,7 @@
     $("#city").html(city);
     $("#region").html(region);
     
-
+    // Checks if tickets are available on StubHub and SeatGeek and displays info 
     let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
     let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
 
@@ -274,7 +286,7 @@
   });
 
 
-
+  // Performs get request and displays info on relevant events 
   function updateEventsObj(queryURL) {
     $.ajax({
       url: "https://cors-anywhere.herokuapp.com/" + queryURL,
