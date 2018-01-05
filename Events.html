@@ -13,7 +13,18 @@
 </head>
 
 <style>
-
+/*    html, body{
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+    }*/
+#map {
+        position:absolute;
+        overflow: visible;
+        height: 50%;
+        width: 50%;
+}
 #userinput,#date-container,#location-container,#button-container{
   margin: 0 auto;
   margin-top: 10px;
@@ -27,16 +38,13 @@
 }
 
 #wrapper{
-  width:85%;
+  height:100%;
+  width:90%;
   margin: 0 auto;
 }
 
 .brand-logo{
   font-family: 'Rancho', cursive;
-}
-
-#NextButton {
-  margin-left: 2em;
 }
 </style>
 
@@ -70,8 +78,13 @@
       </form>  
     </div>
   <hr>
-    <div id="idEventsList"></div>
-    <div id="idButtons"></div>
+    <div class="row">
+      <div style="overflow:visible;" id="map"></div>
+            <div class="col s5 offset-s7">
+        <div id="idEventsList"></div>
+        <div id="idButtons"></div>
+      </div>
+    </div>
   </div>
 
 <div class="modal modal-fixed-footer" id="modal1">
@@ -91,12 +104,13 @@
 
   
 <script type="text/javascript">
+  var positions=[];
+
   var apikey = "nnfhgT4zJPgWPtTG";
   var radius = 5;
   var pagenum = 1;
   var totalEvents = 0;
-  
-  // Grabs and stores user location to find events near them immediately  
+    
   $(document).ready(function() {
     var Latitude = sessionStorage.getItem("Latitude");
     var Longitude = sessionStorage.getItem("Longitude");
@@ -109,8 +123,6 @@
     updateEventsObj(queryURL);
   });  
 
-
-  // Below is the code for the date picker in the nav bar
   $('#date-input').pickadate({
     selectMonths: true, // Creates a dropdown to control month
     selectYears: 2, // Creates a dropdown of 15 years to control year,
@@ -121,8 +133,6 @@
     closeOnSelect: true // Close upon selecting a date,
   });
 
-
-  // Takes in user input to formulate get request
   $("#submitButton").on("click", function(e) { 
       
       e.preventDefault();
@@ -136,7 +146,6 @@
       updateEventsObj(queryURL);
     });
 
-  // Next button grabs info on additional events when number of events exceeds ten
    $(document).on("click", "#NextButton", function(event) { 
     
     pagenum += 1;
@@ -149,7 +158,6 @@
     updateEventsObj(queryURL);
    });
 
-   // Button goes to the previous page
   $(document).on("click", "#PreviousButton", function(event) { 
     
     pagenum -= 1;
@@ -162,7 +170,6 @@
     updateEventsObj(queryURL);
   }); 
 
-  // Info button opens modal and grabs content to display in it
   $(document.body).on("click", ".modal-trigger", function(event) { 
 
     $('#modal1').modal();
@@ -180,7 +187,7 @@
     $("#city").html(city);
     $("#region").html(region);
     
-    // Checks if tickets are available on StubHub and SeatGeek and displays info 
+
     let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
     let stubhubURL= "https://api.stubhub.com/search/catalog/events/v3?fieldlist=ticketinfo,venue,name&parking=false&q="+name+"&city="+city;
 
@@ -284,9 +291,103 @@
       }
     });
   });
+///////////////////////////////////////////////////////////////////////////////////////////////////
+var map, infoWindow, geocoder;
+    var proxy = 'https://cors-anywhere.herokuapp.com/';
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 10, 
+      });
+        //var circle= Circle({radius:8050,center:{lat: -34.397, lng: 150.644}})
+       // map.fitBounds(circle.getBounds())
+      infoWindow = new google.maps.InfoWindow;
+
+           // infoWindow.setPosition(pos);
+           // infoWindow.setContent('Location found.');
+      infoWindow.open(map);
+            //var center=positions[0][0],positions[0][1];
+           contMap();
+      }
+    function contMap(){
+      if(Number(positions[0]!==undefined)){
+        //map.setCenter({lat: Number(positions[0][0]), lng: Number(positions[0][1])});
+          
+        map
+        console.log(positions);
+        var search = "=";
+        var marker, i;
+        var labels=0;
+        /*marker=;*/
+        for(i=0;i < positions.length;i++){
+          $("#submitButton").on("click", function() {
+            labels=0;
+          });
+          labels++;
+          
+
+          queried = positions[i][0]+","+positions[i][1]+"|";
+          search=search+queried;
+
+          marker= new google.maps.Marker({
+            position: new google.maps.LatLng(positions[i][0],positions[i][1]),
+            label: labels.toString(),
+            map:map
+          })
+              //var infowindow = new google.maps.InfoWindow({
+              //content: i
+              //});
+
+          console.log(marker);
+          
+        }
+
+        console.log(search);
+      }
+      geocoder= new google.maps.Geocoder();
+
+      $("#submitButton").on("click", function() {
+        geocodeAddress(geocoder, map);
+        console.log(geocodeAddress);
+      });
 
 
-  // Performs get request and displays info on relevant events 
+
+          /*var loc = pos.lat+","+pos.lng;
+            // Slice off the last unnecessary pipe 
+            var final = search.slice(0,-1);
+            // Build the query
+            var queryUrL = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+loc+"&destinations"+final+"&key=AIzaSyDjlTzVQx8XWIbdCeoNtgeGH0WCWMuigXs";
+            $.ajax({
+               url: proxy+queryUrL,
+               method: 'GET'
+            }).done(function(response) {
+             console.log(response.rows[0].elements);
+
+              }); */
+
+      }
+      
+      function geocodeAddress(geocoder, resultsMap) {
+        var address = document.getElementById("location-input").value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            resultsMap.setCenter(results[0].geometry.location);
+            
+            var marker = new google.maps.Marker({
+              map: resultsMap,
+              position: results[0].geometry.location,
+            });
+
+            console.log(results[0].geometry.location)
+          } else {
+              alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+      }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
   function updateEventsObj(queryURL) {
     $.ajax({
       url: "https://cors-anywhere.herokuapp.com/" + queryURL,
@@ -308,6 +409,14 @@
               index = totalEvents % 10;
       }  
       for (var i = 0; i < index; i++) {
+
+
+          var places=[results.events.event[i].latitude,results.events.event[i].longitude];
+          positions.push(places);
+
+          console.log(positions);
+
+
           var eventsDiv = $("<ul class='collection'>");
           var litag = $("<li class='collection-item avatar'>");
           EventNum = (pagenum * 10) + i + 1 - 10;
@@ -374,12 +483,14 @@
                $("#idButtons").append(buttonsDiv);
            } 
        }
-           
+           contMap();
    }); 
   }
   
 </script>
-
+ <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOh8yxSY-NrXkKPnTCTJnMiQvu9MZ_ZB8&callback=initMap">
+    </script>
 </body>
 
 </html>
