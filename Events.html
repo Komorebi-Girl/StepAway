@@ -93,13 +93,14 @@
 
 <div class="modal modal-fixed-footer" id="modal1">
   <div class="modal-content">
-    <h4 id="name"></h4>
-    <p id="venue"></p>
+    <h5 id="name"></h5>
+    <h6 id="venue"></h6>
     <p id="address"></p>
     <p id="city"></p>
-    <p id="region"></p> 
     <p>StubHub: <span id="stubHubLink"></span></p>
-    <p>SeatGeek: <span id ="seatGeekLink"></span></p>    
+    <p>SeatGeek: <span id ="seatGeekLink"></span></p>  
+    <p><h6><strong>More About the Event:</strong></h6><p>
+    <p id="description"></p>     
 </div>
   <div class="modal-footer">
     <a href="#!" class="btn-flat modal-action modal-close waves-effect waves-red">Close</a>
@@ -182,8 +183,7 @@
   // Info button opens modal and grabs content to display in it
   $(document.body).on("click", ".modal-trigger", function(event) { 
 
-    $('#modal1').modal();
-    $('#modal1').modal('open');
+    
     $("#seatGeekLink").html("");
     $("#stubHubLink").html("");
     var name = $(this).attr("data-name");
@@ -191,11 +191,15 @@
     var city = $(this).attr("data-city");
     var region = $(this).attr("data-region");
     var venue = $(this).attr("data-venue");
+    var description = $(this).attr("data-description");
     $("#name").html(name);
     $("#venue").html(venue);
     $("#address").html(address);
-    $("#city").html(city);
-    $("#region").html(region);
+    var citystate = city + ", " + region;
+    $("#city").html(citystate);
+    $("#description").html(description);
+    $('#modal1').modal();
+    $('#modal1').modal('open');
     
      // Checks if tickets are available on StubHub and SeatGeek and displays info 
     let stubToken = "Bearer 3a694bd9-46d5-3f1a-9589-053adb778c0f";
@@ -451,16 +455,17 @@ var map, infoWindow, geocoder;
           litag.append(venuetag);
           var atag = $("<a href='#!' class='secondary-content'>");
           var itag = $("<i class='material-icons infoClick'>info</i>");
-          itag.attr("data-value", results.events.event[i].title + "~" +
-                                       results.events.event[i].venue_name + "~" +
-                                       results.events.event[i].venue_address + "~" +
-                                       results.events.event[i].city_name + "~" +
-                                       results.events.event[i].region_abbr) ; 
+          // itag.attr("data-value", results.events.event[i].title + "~" +
+          //                              results.events.event[i].venue_name + "~" +
+          //                              results.events.event[i].venue_address + "~" +
+          //                              results.events.event[i].city_name + "~" +
+          //                              results.events.event[i].region_abbr) ; 
           itag.attr("data-name", results.events.event[i].title);   
           itag.attr("data-venue", results.events.event[i].venue_name); 
           itag.attr("data-address", results.events.event[i].venue_address);  
           itag.attr("data-city", results.events.event[i].city_name); 
           itag.attr("data-region", results.events.event[i].region_abbr); 
+          itag.attr("data-description", results.events.event[i].description);
           itag.addClass("modal-trigger");
           itag.attr("data-target", "modal1");
                           
