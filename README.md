@@ -1,3 +1,5 @@
+# StepAway
+
 ## What is it?
 StepAway is a close range event locator app. In other words, this web application allows users to input their preferred date and location to find recreational activities or locate fun-filled events immediately based on their current location. StepAway also assists the user in purchasing tickets for the event of their choosing on StubHub or SeatGeek if tickets are required in order to attend.
 
