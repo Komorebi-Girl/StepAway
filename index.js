@@ -22,7 +22,7 @@ $(document).ready(function() {
     "&within=" +
     radius;
   var eventdate = "Today";
-
+  console.log("queryURL",queryURL)
   $("#idEventsList").empty();
   $("#idButtons").empty();
   sessionStorage.clear();
