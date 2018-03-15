@@ -1,4 +1,5 @@
 var positions = [];
+var venues = [];
 var apikey = "nnfhgT4zJPgWPtTG";
 var radius = 5;
 var pagenum = 1;
@@ -35,7 +36,7 @@ $(document).ready(function() {
       container: "map", // HTML container id
       style: "mapbox://styles/mapbox/streets-v9", // style URL
       center: bullseye, // starting position as [lng, lat]
-      zoom: 13
+      zoom: 10
     });
   }
   updateEventsObj(queryURL);
@@ -167,23 +168,19 @@ $(document.body).on("click", ".modal-trigger", function(event) {
 
     //Sets response to stubData and makes sure something is returned
     let stubData = response.events;
-    console.log(stubData);
 
     if (stubData.length >= 1) {
       //Venue URL
       stubLink = "https://www.stubhub.com/" + stubData[0].venue.webURI;
-      console.log("StubURL:" + stubLink);
 
       //Sets currency
       stubCurrency = stubData[0].ticketInfo.minPriceWithCurrencyCode.currency;
 
       //Sets min value
       stubMin = stubData[0].ticketInfo.minPriceWithCurrencyCode.amount;
-      console.log("Stub Min: " + stubMin + stubCurrency);
 
       //Sets max value
       stubMax = stubData[0].ticketInfo.maxPriceWithCurrencyCode.amount;
-      console.log("Stub Max: " + stubMax + stubCurrency);
 
       let nf = new Intl.NumberFormat(["en-US"], {
         style: "currency",
@@ -195,7 +192,6 @@ $(document.body).on("click", ".modal-trigger", function(event) {
 
       //Reformats min price into $ddd.cc format
       let stubMinFormatted = nf.format(stubMin);
-      console.log("Stub Min: " + stubMinFormatted);
 
       //Appends button to card
       let stubButton =
@@ -209,7 +205,7 @@ $(document.body).on("click", ".modal-trigger", function(event) {
       $("#stubHubLink").append(stubButton);
     } else {
       //lets user know that no tickets were found
-      console.log("No events found on Stubhub");
+
       let stubButton =
         '<a href="https://www.stubhub.com">Sorry, we could not find tickets.</a>';
       $("#stubHubLink").append(stubButton);
@@ -234,23 +230,20 @@ $(document.body).on("click", ".modal-trigger", function(event) {
 
     //Sets response to seatData and makes sure something is returned
     let seatData = response.venues;
-    console.log(seatData);
 
     if (seatData.length >= 1) {
       //Sets venue name
       seatVenueName = seatData[0].name;
-      console.log("Venue Name: " + seatVenueName);
 
       //Sets venue ticket url
       seatVenueURL = seatData[0].url;
-      console.log("Ticket URL: " + seatVenueURL);
 
       //Appends the button to card
       let seatButton = "<a href=" + seatVenueURL + ">" + seatVenueName + "</a>";
       $("#seatGeekLink").append(seatButton);
     } else {
       //Lets user know that no tickets were found
-      console.log("No events found on SeatGeek");
+
       let seatButton =
         '<a href="https://www.seatgeek.com">Sorry, we could not find tickets</a>';
       $("#seatGeekLink").append(seatButton);
@@ -281,12 +274,12 @@ function updateEventsObj(queryURL) {
       ];
       // Mapbox takes in coordinates in lng,lat format so must reverse coordinates from api
       positions.push(places.reverse());
-      console.log("Positions:", positions);
+      venues.push(results.events.event[i].venue_name);
 
       // Creating the number icons
       var eventsDiv = $("<ul class='collection'>");
       var litag = $("<li class='collection-item avatar'>");
-      EventNum = pagenum * 10 + i + 1 - 10;
+      var EventNum = pagenum * 10 + i + 1 - 10;
       var newSpan = $("<span class='fa-stack fa-2x'>");
       var circle = $("<i class='fa fa-circle fa-stack-2x icon-cog thumbnail'>");
       var number = $("<strong class='fa-stack-1x white-text'>").html(EventNum);
@@ -334,7 +327,6 @@ function updateEventsObj(queryURL) {
 
     if (Latitude === null || Longitude === null) {
       bullseye = positions[0];
-      console.log("This is the Result Bullseye:", bullseye);
       mapboxgl.accessToken =
         "pk.eyJ1IjoicGhpbGlwczEiLCJhIjoiY2plcmE0NHF5MHlxcTMzcW52NjcyMTNrayJ9.HeoED9-4G8ML-EB-aCdnwQ";
 
@@ -342,9 +334,25 @@ function updateEventsObj(queryURL) {
         container: "map", // HTML container id
         style: "mapbox://styles/mapbox/streets-v9", // style URL
         center: bullseye, // starting position as [lng, lat]
-        zoom: 13
+        zoom: 10
       });
     }
+
+    positions.forEach(function(point) {
+      // create a HTML element for each feature
+      var el = document.createElement("div");
+      el.className = "marker";
+      var venueIndex = positions.indexOf(point);
+      // make a marker for each feature and add to the map
+      new mapboxgl.Marker(el)
+        .setLngLat(point)
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 }).setHTML(
+            "<h6>" + venues[venueIndex] + "</h6>"
+          )
+        )
+        .addTo(map);
+    });
 
     if (pagenum > 1) {
       var buttonsDiv = $("<br><div class='buttonsDiv'>");
