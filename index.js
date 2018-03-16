@@ -28,7 +28,6 @@ $(document).ready(function() {
   // creates a map with the user's location as the center
   if (Latitude !== null && Longitude !== null) {
     bullseye = [Longitude, Latitude];
-    console.log("This is the  User Bullseye:", bullseye);
     mapboxgl.accessToken =
       "pk.eyJ1IjoicGhpbGlwczEiLCJhIjoiY2plcmE0NHF5MHlxcTMzcW52NjcyMTNrayJ9.HeoED9-4G8ML-EB-aCdnwQ";
     map = new mapboxgl.Map({
@@ -54,6 +53,7 @@ $(document).ready(function() {
 
 // Takes in user input to formulate get request
 $("#submitButton").on("click", function(e) {
+  positions = [];
   e.preventDefault();
   pagenum = 1;
   $("#idEventsList").empty();
@@ -63,7 +63,9 @@ $("#submitButton").on("click", function(e) {
     .trim();
   var location = $("#location-input")
     .val()
-    .trim();
+    .trim()
+    .replace(", ", "+")
+    .replace(" ", "+");
   var queryURL =
     "http://api.eventful.com/json/events/search?app_key=" +
     apikey +
@@ -73,6 +75,7 @@ $("#submitButton").on("click", function(e) {
     location +
     "&within=" +
     radius;
+  console.log("User Input Query URL:", queryURL);
   updateEventsObj(queryURL);
 });
 
