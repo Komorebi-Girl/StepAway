@@ -75,7 +75,6 @@ $("#submitButton").on("click", function(e) {
     location +
     "&within=" +
     radius;
-  console.log("User Input Query URL:", queryURL);
   updateEventsObj(queryURL);
 });
 
