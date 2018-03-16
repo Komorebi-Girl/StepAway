@@ -10,6 +10,7 @@ var bullseye;
 var map;
 $(document).ready(function() {
   // Grabs and stores user location to find events near them immediately
+  var eventdate = "Today";
   var queryURL =
     "http://api.eventful.com/json/events/search?app_key=" +
     apikey +
@@ -21,8 +22,6 @@ $(document).ready(function() {
     Longitude +
     "&within=" +
     radius;
-  var eventdate = "Today";
-
   $("#idEventsList").empty();
   $("#idButtons").empty();
   sessionStorage.clear();
